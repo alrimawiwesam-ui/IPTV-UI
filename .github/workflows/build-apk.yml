@@ -1,14 +1,9 @@
-# ═══════════════════════════════════════════════════════════════════
-# Builds ABEDSON TV automatically on GitHub's servers.
-# Usage: push this project to a GitHub repository → open the
-# "Actions" tab → the APK appears as a downloadable artifact.
-# ═══════════════════════════════════════════════════════════════════
 name: Build APK
 
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch: {}   # also lets you press "Run workflow" manually
+  workflow_dispatch: {}
 
 jobs:
   build:
@@ -23,15 +18,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle
+      - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
 
-      - name: Build release APK (debug-signed, installs directly)
-        run: gradle assembleRelease --no-daemon
-        # Android SDK is preinstalled on GitHub's ubuntu runners
+      - name: Locate project and build
+        run: |
+          if [ -f settings.gradle ]; then DIR=.
+          elif [ -f android/settings.gradle ]; then DIR=android
+          else echo "settings.gradle not found anywhere"; ls -la; exit 1
+          fi
+          echo "Building in: $DIR"
+          gradle -p "$DIR" assembleRelease --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: ABEDSON-TV-apk
-          path: app/build/outputs/apk/release/*.apk
+          path: '**/app/build/outputs/apk/release/*.apk'
