@@ -1,0 +1,37 @@
+# ═══════════════════════════════════════════════════════════════════
+# Builds ABEDSON TV automatically on GitHub's servers.
+# Usage: push this project to a GitHub repository → open the
+# "Actions" tab → the APK appears as a downloadable artifact.
+# ═══════════════════════════════════════════════════════════════════
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}   # also lets you press "Run workflow" manually
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build release APK (debug-signed, installs directly)
+        run: gradle assembleRelease --no-daemon
+        # Android SDK is preinstalled on GitHub's ubuntu runners
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ABEDSON-TV-apk
+          path: app/build/outputs/apk/release/*.apk
