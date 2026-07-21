@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="config.js"></script>
+<style>
+:root{
+  --bg:#0A0D0F;--panel:#151B20;--raise:#1C242B;--line:rgba(255,255,255,.1);
+  --text:#F4F7F9;--dim:#93A3AD;--accent:#E9EEF2;--danger:#FF5C6C;--ok:#4ADE9E;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(60vw 40vw at 85% -10%,rgba(150,160,170,.10),transparent 60%)}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#26313A;border-radius:8px}
+.wrap{max-width:720px;margin:0 auto;padding:40px 20px 70px}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.top h1{font-size:22px;font-weight:800}
+.top .tag{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);background:var(--panel);border:1px solid var(--line);padding:5px 11px;border-radius:99px}
+.top .back{margin-left:auto;background:none;border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:10px 18px;font:600 13.5px 'Inter';cursor:pointer;transition:.18s;text-decoration:none;display:inline-block}
+.top .back:hover{color:var(--text);border-color:var(--accent)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 30px;margin-bottom:20px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.card h2{font-size:17px;font-weight:800;margin-bottom:4px}
+.card .sub{font-size:13px;color:var(--dim);line-height:1.55;margin-bottom:20px}
+label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:18px 0 7px}
+label:first-of-type{margin-top:0}
+input[type=text],input[type=password]{width:100%;padding:14px 16px;background:var(--raise);border:1px solid transparent;border-radius:8px;color:var(--text);font:500 14.5px 'Inter';outline:none;transition:.2s}
+input::placeholder{color:#5E6C76}
+input:focus{border-color:var(--accent);background:#232C34;box-shadow:0 0 0 3px rgba(255,255,255,.09)}
+.f.error input{border-color:var(--danger)}
+.err{display:none;font-size:12.5px;color:var(--danger);margin-top:7px;line-height:1.5}
+.f.error .err{display:block}
+.hint{font-size:12px;color:#6C7B85;margin-top:7px;line-height:1.5}
+.btn{padding:14px 24px;border:none;border-radius:8px;cursor:pointer;font:700 14.5px 'Inter';color:#0B0E11;background:var(--accent);transition:.18s}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{padding:14px 22px;border-radius:8px;border:1px solid var(--line);background:none;color:var(--dim);font:700 14px 'Inter';cursor:pointer;transition:.18s}
+.btn-ghost:hover{color:var(--text);border-color:var(--accent)}
+.btn-danger{border-color:rgba(255,92,108,.4);color:#FF9AA5}
+.btn-danger:hover{border-color:var(--danger);color:var(--danger)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.logo-row{display:flex;align-items:center;gap:16px;margin-top:12px;flex-wrap:wrap}
+.logo-prev{flex:1;min-width:150px;height:64px;background:#0B0E11;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px}
+.logo-prev img{max-height:100%;max-width:100%;object-fit:contain}
+.logo-prev span{font-size:12px;color:#5E6C76}
+.gate{max-width:400px;margin:14vh auto 0}
+.gate .card{text-align:center}
+.gate input{text-align:center;letter-spacing:.4em;font-size:20px}
+.status{display:none;padding:13px 16px;border-radius:8px;font-size:13.5px;line-height:1.5;margin-bottom:18px}
+.status.ok{display:block;background:rgba(74,222,158,.1);border:1px solid rgba(74,222,158,.35);color:#9BEFCB}
+.status.bad{display:display;display:block;background:rgba(255,92,108,.1);border:1px solid rgba(255,92,108,.35);color:#FFB3BC}
+pre{background:#0B0E11;border:1px solid var(--line);border-radius:8px;padding:16px;font:500 12.5px/1.6 ui-monospace,Menlo,monospace;color:#B9C6CF;overflow-x:auto;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow-y:auto}
+.note{font-size:12.5px;color:var(--dim);line-height:1.6;margin-top:12px}
+.note b{color:var(--text)}
+@media (max-width:600px){.wrap{padding:24px 14px 50px}.card{padding:22px 18px}.top h1{font-size:19px}}
+</style>
+</head>
+<body>
+
+<!-- ══════ PIN GATE ══════ -->
+<div class="wrap gate" id="gate">
+  <div class="card">
+    <h2>Admin access</h2>
+    <p class="sub">Enter the admin PIN to change app settings.</p>
+    <div class="f" id="pinF">
+      <input id="pin" type="password" inputmode="numeric" placeholder="••••" autocomplete="off">
+      <div class="err">Wrong PIN — try again.</div>
+    </div>
+    <div class="actions" style="justify-content:center">
+      <a class="btn-ghost" href="index.html">Back to app</a>
+      <button class="btn" id="pinGo">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PANEL ══════ -->
+<div class="wrap" id="panel" style="display:none">
+  <div class="top">
+    <h1>Admin panel</h1>
+    <span class="tag">Settings</span>
+    <a class="back" href="index.html">← Back to app</a>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="card">
+    <h2>Branding</h2>
+    <p class="sub">The name and logo shown on the login screen and top bar.</p>
+
+    <label for="appName">App name</label>
+    <div class="f"><input id="appName" type="text" placeholder="ABEDSON TV"></div>
+
+    <label for="logoImage">Logo — file name or URL</label>
+    <div class="f"><input id="logoImage" type="text" placeholder="logo.png" spellcheck="false"></div>
+    <div class="logo-row">
+      <button class="btn-ghost" id="uploadBtn" type="button">Upload image…</button>
+      <div class="logo-prev" id="logoPrev"><span>No logo</span></div>
+    </div>
+    <input type="file" id="logoFile" accept="image/*" style="display:none">
+    <div class="hint">Uploading stores the image inside the settings on this device. To ship a logo to <b>all</b> users, put the file next to index.html and type its name here (e.g. <b>logo.png</b>).</div>
+
+    <label for="splashVideo">Splash video file</label>
+    <div class="f"><input id="splashVideo" type="text" placeholder="splash.mp4" spellcheck="false"></div>
+    <div class="hint">Replace splash.mp4 in the app folder to change the intro, or point to another file name.</div>
+  </div>
+
+  <div class="card">
+    <h2>Server</h2>
+    <p class="sub">Users never see or type this — the app connects to it automatically.</p>
+    <label for="defaultHost">Default host URL</label>
+    <div class="f" id="hostF">
+      <input id="defaultHost" type="text" placeholder="http://server.com:8080" spellcheck="false">
+      <div class="err">URL must start with http:// or https:// — for example http://server.com:8080</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Links</h2>
+    <p class="sub">Where the buttons on the login page send your users.</p>
+    <label for="storeUrl">Store / “Register now” URL</label>
+    <div class="f" id="storeF"><input id="storeUrl" type="text" placeholder="https://store.example.com" spellcheck="false"><div class="err">Must start with http:// or https://</div></div>
+    <label for="supportUrl">Support / “Forgot password” link</label>
+    <div class="f" id="supportF"><input id="supportUrl" type="text" placeholder="https://wa.me/9665xxxxxxx" spellcheck="false"><div class="err">Must start with http:// or https://</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Security</h2>
+    <p class="sub">PIN required to open this page.</p>
+    <label for="adminPin">Admin PIN</label>
+    <div class="f"><input id="adminPin" type="text" inputmode="numeric" placeholder="1234"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="saveBtn">Save settings</button>
+    <button class="btn-ghost" id="exportBtn">Download config.js</button>
+    <button class="btn-ghost btn-danger" id="resetBtn">Reset to defaults</button>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <h2>Apply to everyone</h2>
+    <p class="sub">Saving stores settings on <b>this device only</b>. To make them the default for every user, download config.js below and upload it to your app folder, replacing the old one.</p>
+    <pre id="preview"></pre>
+    <div class="note">Tip: after replacing config.js, users get the new settings automatically the next time they open the app.</div>
+  </div>
+</div>
+
+<script>
+var DEFAULTS = Object.assign({
+  appName:"MY TV", letter:"A", logoImage:"logo.png",
+  splashVideo:"splash.mp4", splashSound:true,
+  defaultHost:"", storeUrl:"", supportUrl:"", adminPin:"1234"
+}, window.APP_CONFIG || {});
+
+var $ = function(s){ return document.querySelector(s); };
+function loadCfg(){
+  var o={};
+  try{ o=JSON.parse(localStorage.getItem("tv_cfg")||"{}"); }catch(e){}
+  return Object.assign({},DEFAULTS,o);
+}
+var CFG = loadCfg();
+
+/* ── PIN gate ── */
+$("#pin").addEventListener("keydown",function(e){ if(e.key==="Enter") $("#pinGo").click(); });
+$("#pin").addEventListener("input",function(){ $("#pinF").classList.remove("error"); });
+$("#pinGo").onclick=function(){
+  if($("#pin").value.trim()!==String(CFG.adminPin)){ $("#pinF").classList.add("error"); $("#pin").select(); return; }
+  $("#gate").style.display="none";
+  $("#panel").style.display="block";
+  fillForm();
+};
+
+/* ── form ── */
+var FIELDS=["appName","logoImage","splashVideo","defaultHost","storeUrl","supportUrl","adminPin"];
+function fillForm(){
+  FIELDS.forEach(function(k){ $("#"+k).value = CFG[k]==null ? "" : CFG[k]; });
+  renderLogo(CFG.logoImage);
+  renderPreview();
+}
+function renderLogo(src){
+  var box=$("#logoPrev");
+  box.innerHTML="";
+  if(!src){ box.innerHTML="<span>No logo</span>"; return; }
+  var i=new Image();
+  i.onload=function(){ box.innerHTML=""; box.appendChild(i); };
+  i.onerror=function(){ box.innerHTML="<span>Not found: "+String(src).slice(0,40)+"</span>"; };
+  i.src=src;
+}
+$("#logoImage").addEventListener("input",function(e){ renderLogo(e.target.value.trim()); renderPreview(); });
+FIELDS.forEach(function(k){
+  $("#"+k).addEventListener("input",function(){
+    var f=$("#"+k).closest(".f"); if(f) f.classList.remove("error");
+    renderPreview();
+  });
+});
+$("#uploadBtn").onclick=function(){ $("#logoFile").click(); };
+$("#logoFile").addEventListener("change",function(e){
+  var file=e.target.files && e.target.files[0];
+  if(!file) return;
+  if(file.size>1500000){ showStatus("Image is too large — please use one under 1.5 MB.",false); return; }
+  var r=new FileReader();
+  r.onload=function(){ $("#logoImage").value=r.result; renderLogo(r.result); renderPreview(); };
+  r.readAsDataURL(file);
+});
+
+function collect(){
+  var o={};
+  FIELDS.forEach(function(k){ o[k]=$("#"+k).value.trim(); });
+  o.letter=(o.appName||"A").charAt(0).toUpperCase();
+  o.splashSound=DEFAULTS.splashSound;
+  return o;
+}
+function validate(o){
+  var ok=true;
+  function bad(id,cond){ var f=$("#"+id).closest(".f"); if(cond){ f.classList.add("error"); ok=false; } else f.classList.remove("error"); }
+  bad("defaultHost", !/^https?:\/\/.+/i.test(o.defaultHost));
+  bad("storeUrl",   o.storeUrl   && !/^https?:\/\/.+/i.test(o.storeUrl));
+  bad("supportUrl", o.supportUrl && !/^https?:\/\/.+/i.test(o.supportUrl));
+  if(!o.adminPin){ $("#adminPin").closest(".f").classList.add("error"); ok=false; }
+  return ok;
+}
+function showStatus(msg,good){
+  var s=$("#status");
+  s.textContent=msg;
+  s.className="status "+(good?"ok":"bad");
+  try{window.scrollTo({top:0,behavior:"smooth"});}catch(e){}
+  if(good) setTimeout(function(){ s.className="status"; },4000);
+}
+$("#saveBtn").onclick=function(){
+  var o=collect();
+  if(!validate(o)){ showStatus("Please fix the highlighted fields.",false); return; }
+  o.defaultHost=o.defaultHost.replace(/\/+$/,"");
+  try{
+    localStorage.setItem("tv_cfg",JSON.stringify(o));
+    localStorage.removeItem("tv_session");   /* force a fresh sign-in with the new server */
+    localStorage.removeItem("tv_nav");
+    CFG=loadCfg();
+    showStatus("Saved. These settings now apply on this device — open the app to see them.",true);
+    renderPreview();
+  }catch(e){ showStatus("Could not save — device storage is full.",false); }
+};
+$("#resetBtn").onclick=function(){
+  if(!confirm("Reset all settings back to the values in config.js?")) return;
+  try{ localStorage.removeItem("tv_cfg"); }catch(e){}
+  CFG=loadCfg(); fillForm();
+  showStatus("Settings reset to the defaults from config.js.",true);
+};
+
+/* ── config.js export ── */
+function buildConfigFile(){
+  var o=collect();
+  function q(v){ return JSON.stringify(v==null?"":v); }
+  return "/* ═══════════════════════════════════════════════════════════════════\n"+
+"   APP CONFIGURATION — generated by admin.html\n"+
+"   Upload this file to your app folder (replacing the old config.js)\n"+
+"   to apply these settings for every user.\n"+
+"   ═══════════════════════════════════════════════════════════════════ */\n"+
+"window.APP_CONFIG = {\n"+
+"  appName:     "+q(o.appName)+",\n"+
+"  letter:      "+q(o.letter)+",\n"+
+"  logoImage:   "+q(o.logoImage)+",\n"+
+"  splashVideo: "+q(o.splashVideo)+",\n"+
+"  splashSound: "+(DEFAULTS.splashSound?"true":"false")+",\n"+
+"  defaultHost: "+q(String(o.defaultHost).replace(/\/+$/,""))+",\n"+
+"  storeUrl:    "+q(o.storeUrl)+",\n"+
+"  supportUrl:  "+q(o.supportUrl)+",\n"+
+"  adminPin:    "+q(o.adminPin)+"\n"+
+"};\n";
+}
+function renderPreview(){
+  var txt=buildConfigFile();
+  $("#preview").textContent = txt.length>4000 ? txt.slice(0,1200)+"\n… (logo image data shortened in this preview — the download is complete)" : txt;
+}
+$("#exportBtn").onclick=function(){
+  var o=collect();
+  if(!validate(o)){ showStatus("Please fix the highlighted fields before downloading.",false); return; }
+  var blob=new Blob([buildConfigFile()],{type:"text/javascript"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="config.js";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
+  showStatus("config.js downloaded — upload it to your app folder to apply for everyone.",true);
+};
+
+setTimeout(function(){ $("#pin").focus(); },200);
+</script>
+</body>
+</html>

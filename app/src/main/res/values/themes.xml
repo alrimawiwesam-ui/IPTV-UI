@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.NovaTV" parent="android:Theme.Material.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">#04060D</item>
+        <item name="android:colorBackground">#04060D</item>
+        <item name="android:navigationBarColor">#04060D</item>
+        <item name="android:statusBarColor">#04060D</item>
+    </style>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ★ Replace with your own 320x180 PNG banner: put tv_banner.png in res/drawable and delete this file -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp" android:height="180dp"
+    android:viewportWidth="320" android:viewportHeight="180">
+    <path android:pathData="M0,0h320v180h-320z" android:fillColor="#0A0F1E"/>
+    <path android:pathData="M60,55h40l20,40l20,-40h40l-40,70h-40z" android:fillColor="#7A8CFF"/>
+    <path android:pathData="M190,55h70v18h-70z M190,81h50v18h-50z M190,107h70v18h-70z" android:fillColor="#B15CFF"/>
+</vector>

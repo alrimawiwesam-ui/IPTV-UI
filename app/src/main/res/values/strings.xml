@@ -1,0 +1,4 @@
+<resources>
+    <!-- ★ Change this to your brand name — shown under the app icon on the TV -->
+    <string name="app_name">ABEDSON TV</string>
+</resources>
