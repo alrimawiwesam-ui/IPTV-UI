@@ -9,8 +9,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.ComponentActivity
-
+import android.app.Activity
 /**
  * NOVA TV — Android TV shell.
  * Loads the full app UI from assets/www/index.html in a fullscreen WebView.
@@ -22,7 +21,7 @@ import androidx.activity.ComponentActivity
  *  - TV remote BACK button navigates inside the app  -> dispatchKeyEvent below
  *  - Screen stays awake while watching               -> FLAG_KEEP_SCREEN_ON
  */
-class MainActivity : ComponentActivity() {
+class MainActivity : Activity() {
 
     private lateinit var web: WebView
 
